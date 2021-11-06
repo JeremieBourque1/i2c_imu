@@ -15,6 +15,7 @@ else:
     exit()
 
 Path(os.path.dirname(target_path)).mkdir(parents=True, exist_ok=True)
+print("Target path: '" + str(target_path) + "'")
 
 
 general_params = {
