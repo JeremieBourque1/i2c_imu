@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+from pathlib import Path
+
+source_path = sys.argv[1]
+target_path = sys.argv[2]
+
+# Make sure source path exists and create target directory if needed
+if os.path.exists(source_path):
+    print("Source path: '" + str(source_path) + "'")
+else:
+    print("Error: source path: '" + str(source_path) + "' does not exist")
+    exit()
+
+Path(os.path.dirname(target_path)).mkdir(parents=True, exist_ok=True)
+
+
 general_params = {
     "imu_type": None,
     "imu_frame": "imu_link",
@@ -50,7 +67,7 @@ def get_value_from_line(line, key, dict, type, index=-1):
 
 
 # Parse file
-with open('RTIMULib.ini', "r") as f:
+with open(source_path, "r") as f:
     lines = f.readlines()
 
     for line in lines:
@@ -92,22 +109,24 @@ with open('RTIMULib.ini', "r") as f:
             get_value_from_line(line, "accel_max", calibration, float, index=2)
 
         # Get imu parameters
-        elif "MPU9250GyroAccelSampleRate" in line:
-            get_value_from_line(line, "gyro_accel_sample_rate", imu_params[imu_name], int)
-        elif "MPU9250CompassSampleRate" in line:
-            get_value_from_line(line, "compass_sample_rate", imu_params[imu_name], int)
-        elif "MPU9250GyroLpf" in line:
-            get_value_from_line(line, "gyro_low_pass_filter", imu_params[imu_name], int)
-        elif "MPU9250AccelLpf" in line:
-            get_value_from_line(line, "accel_low_pass_filter", imu_params[imu_name], int)
-        elif "MPU9250GyroFSR" in line:
-            get_value_from_line(line, "gyro_full_scale_range", imu_params[imu_name], int)
-        elif "MPU9250AccelFSR" in line:
-            get_value_from_line(line, "accel_full_scale_range", imu_params[imu_name], int)
+        if imu_name == "mpu9250":
+            if "MPU9250GyroAccelSampleRate" in line:
+                get_value_from_line(line, "gyro_accel_sample_rate", imu_params[imu_name], int)
+            elif "MPU9250CompassSampleRate" in line:
+                get_value_from_line(line, "compass_sample_rate", imu_params[imu_name], int)
+            elif "MPU9250GyroLpf" in line:
+                get_value_from_line(line, "gyro_low_pass_filter", imu_params[imu_name], int)
+            elif "MPU9250AccelLpf" in line:
+                get_value_from_line(line, "accel_low_pass_filter", imu_params[imu_name], int)
+            elif "MPU9250GyroFSR" in line:
+                get_value_from_line(line, "gyro_full_scale_range", imu_params[imu_name], int)
+            elif "MPU9250AccelFSR" in line:
+                get_value_from_line(line, "accel_full_scale_range", imu_params[imu_name], int)
+        # TODO: do other imu types
 
 
 # Write yaml file
-with open('params_test.yaml', "w") as f:
+with open(target_path, "w") as f:
     # General parameters
     general_param_keys = list(general_params.keys())
     for param in general_param_keys:
@@ -124,4 +143,3 @@ with open('params_test.yaml', "w") as f:
     calibration_keys = list(calibration.keys())
     for key in calibration_keys:
         f.write("  " + key + ": " + str(calibration[key]) + "\n")
-    
