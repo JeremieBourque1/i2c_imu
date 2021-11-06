@@ -41,6 +41,8 @@ imu_params = {
 calibration = {
     "compass_min": [0] * 3,
     "compass_max": [0] * 3,
+    "compass_cal_offset": [0] * 3,
+    "compass_cal_corr": [0] * 9,
     "accel_min": [0] * 3,
     "accel_max": [0] * 3
 }
@@ -96,6 +98,18 @@ with open(source_path, "r") as f:
             get_value_from_line(line, "compass_max", calibration, float, index=1)
         elif "CompassCalMaxZ" in line:
             get_value_from_line(line, "compass_max", calibration, float, index=2)
+        elif "compassCalOffsetX" in line:
+            get_value_from_line(line, "compass_cal_offset", calibration, float, index=0)
+        elif "compassCalOffsetY" in line:
+            get_value_from_line(line, "compass_cal_offset", calibration, float, index=1)
+        elif "compassCalOffsetZ" in line:
+            get_value_from_line(line, "compass_cal_offset", calibration, float, index=2)
+        elif "compassCalCorr" in line:
+            split_line = line.split("=")
+            row = int((split_line[0])[-2])
+            col = int((split_line[0])[-1])
+            index = (row - 1) * 3 + (col - 1)
+            get_value_from_line(line, "compass_cal_corr", calibration, float, index=index)
         elif "AccelCalMinX" in line:
             get_value_from_line(line, "accel_min", calibration, float, index=0)
         elif "AccelCalMinY" in line:
