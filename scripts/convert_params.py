@@ -23,7 +23,8 @@ general_params = {
     "imu_frame": "imu_link",
     "i2c_bus": None,
     "i2c_slave_address": None,
-    "fusion_type": None
+    "fusion_type": None,
+    "magnetic_declination": None
 }
 
 # TODO: add parameters for other imu types
@@ -84,6 +85,8 @@ with open(source_path, "r") as f:
             get_value_from_line(line, "i2c_slave_address", general_params, int)
         elif "FusionType" in line:
             get_value_from_line(line, "fusion_type", general_params, int)
+        elif "compassAdjDeclination" in line:
+            get_value_from_line(line, "magnetic_declination", general_params, float)
 
         # Get calibration data
         elif "CompassCalMinX" in line:
