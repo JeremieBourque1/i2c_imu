@@ -158,3 +158,5 @@ with open(target_path, "w") as f:
     calibration_keys = list(calibration.keys())
     for key in calibration_keys:
         f.write("  " + key + ": " + str(calibration[key]) + "\n")
+
+print("Conversion completed successfully")
